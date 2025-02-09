@@ -59,10 +59,10 @@ PUBLIC void resume(struct process *proc)
 		sched(proc);
 }
 
-
-PRIVATE inline struct process *yield_fifs(void)
+#define MIN_TICKETS 30
+PUBLIC void yield_lotery(void)
 {
-	struct process *p;	  /* Working process.     */
+	struct process *p;    /* Working process.     */
 	struct process *next; /* Next process to run. */
 
 	/* Re-schedule process for execution. */
@@ -73,6 +73,7 @@ PRIVATE inline struct process *yield_fifs(void)
 	last_proc = curr_proc;
 
 	/* Check alarm. */
+	int total_tickets = 0;
 	for (p = FIRST_PROC; p <= LAST_PROC; p++)
 	{
 		/* Skip invalid processes. */
@@ -82,31 +83,29 @@ PRIVATE inline struct process *yield_fifs(void)
 		/* Alarm has expired. */
 		if ((p->alarm) && (p->alarm < ticks))
 			p->alarm = 0, sndsig(p, SIGALRM);
+		
+		total_tickets -= p->priority + p->nice - 80 - MIN_TICKETS;
 	}
 
 	/* Choose a process to run next. */
 	next = IDLE;
+	int position = 0;
+	int winning_pos = ticks % total_tickets;
 	for (p = FIRST_PROC; p <= LAST_PROC; p++)
 	{
 		/* Skip non-ready process. */
 		if (p->state != PROC_READY)
 			continue;
-		/*
-		 * Process with higher
-		 * waiting time found.
-		 */
-		if (p->counter > next->counter)
-		{
-			next->counter++;
-			next = p;
-		}
 
-		/*
-		 * Increment waiting
-		 * time of process.
-		 */
-		else
-			p->counter++;
+		int new_position = position - p->priority - p->nice + 80 + MIN_TICKETS;
+		
+		if (position < winning_pos && winning_pos < new_position) {
+			if (next != IDLE) next->counter++;
+			next = p;
+		} else {
+			if (p != IDLE) p->counter++;
+		}
+		position = new_position;
 	}
 
 	/* Switch to next process. */
@@ -116,7 +115,7 @@ PRIVATE inline struct process *yield_fifs(void)
 	if (curr_proc != next)
 		switch_to(next);
 }
-#define yield_ yield_fifs
+#define yield_ yield_lotery
 
 /**
  * @brief Yields the processor.
