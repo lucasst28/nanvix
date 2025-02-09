@@ -1,0 +1,5 @@
+toolchain/libexec/gcc/i486-elf/13.1.0/cc1 filter=lfs diff=lfs merge=lfs -text
+toolchain/libexec/gcc/i486-elf/13.1.0/lto1 filter=lfs diff=lfs merge=lfs -text
+toolchain/bin/i486-elf-gdb filter=lfs diff=lfs merge=lfs -text
+toolchain/bin/i486-elf-lto-dump filter=lfs diff=lfs merge=lfs -text
+hdd.img filter=lfs diff=lfs merge=lfs -text
