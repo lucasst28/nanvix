@@ -59,8 +59,7 @@ PUBLIC void resume(struct process *proc)
 		sched(proc);
 }
 
-#define MIN_TICKETS 30
-PUBLIC void yield_lotery(void)
+PUBLIC void yield_mult_queues(void)
 {
 	struct process *p;    /* Working process.     */
 	struct process *next; /* Next process to run. */
@@ -73,49 +72,50 @@ PUBLIC void yield_lotery(void)
 	last_proc = curr_proc;
 
 	/* Check alarm. */
-	int total_tickets = 0;
 	for (p = FIRST_PROC; p <= LAST_PROC; p++)
 	{
 		/* Skip invalid processes. */
 		if (!IS_VALID(p))
 			continue;
-
+		
 		/* Alarm has expired. */
 		if ((p->alarm) && (p->alarm < ticks))
 			p->alarm = 0, sndsig(p, SIGALRM);
-		
-		total_tickets -= p->priority + p->nice - 80 - MIN_TICKETS;
 	}
 
 	/* Choose a process to run next. */
 	next = IDLE;
-	int position = 0;
-	int winning_pos = ticks % total_tickets;
 	for (p = FIRST_PROC; p <= LAST_PROC; p++)
 	{
 		/* Skip non-ready process. */
 		if (p->state != PROC_READY)
 			continue;
-
-		int new_position = position - p->priority - p->nice + 80 + MIN_TICKETS;
 		
-		if (position < winning_pos && winning_pos < new_position) {
-			if (next != IDLE) next->counter++;
+		if (p->counter > next->counter)
+		{
+			next->counter++;
 			next = p;
-		} else {
-			if (p != IDLE) p->counter++;
 		}
-		position = new_position;
+			
+		else
+			p->counter++;
 	}
-
+	
 	/* Switch to next process. */
 	next->priority = PRIO_USER;
 	next->state = PROC_RUNNING;
-	next->counter = PROC_QUANTUM;
+	if(next!=IDLE) {
+		next->queues++;
+		next->counter = (next->queues)*PROC_QUANTUM;
+	}
+	else{
+		next->counter = PROC_QUANTUM;
+	}
 	if (curr_proc != next)
 		switch_to(next);
 }
-#define yield_ yield_lotery
+
+#define yield_ yield_mult_queues
 
 /**
  * @brief Yields the processor.
