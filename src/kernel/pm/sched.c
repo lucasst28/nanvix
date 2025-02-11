@@ -26,7 +26,7 @@
 
 /**
  * @brief Schedules a process to execution.
- *
+ * 
  * @param proc Process to be scheduled.
  */
 PUBLIC void sched(struct process *proc)
@@ -47,20 +47,21 @@ PUBLIC void stop(void)
 
 /**
  * @brief Resumes a process.
- *
+ * 
  * @param proc Process to be resumed.
- *
+ * 
  * @note The process must stopped to be resumed.
  */
 PUBLIC void resume(struct process *proc)
-{
+{	
 	/* Resume only if process has stopped. */
 	if (proc->state == PROC_STOPPED)
 		sched(proc);
 }
 
+#define MIN_TICKETS 30
 /**
- * @brief Yields the processor.
+ * @brief Yields the processor with lottery scheduling.
  */
 PUBLIC void yield(void)
 {
@@ -75,6 +76,7 @@ PUBLIC void yield(void)
 	last_proc = curr_proc;
 
 	/* Check alarm. */
+	int total_tickets = 0;
 	for (p = FIRST_PROC; p <= LAST_PROC; p++)
 	{
 		/* Skip invalid processes. */
@@ -84,32 +86,29 @@ PUBLIC void yield(void)
 		/* Alarm has expired. */
 		if ((p->alarm) && (p->alarm < ticks))
 			p->alarm = 0, sndsig(p, SIGALRM);
+		
+		total_tickets -= p->priority + p->nice - 80 - MIN_TICKETS;
 	}
 
 	/* Choose a process to run next. */
 	next = IDLE;
+	int position = 0;
+	int winning_pos = ticks % total_tickets;
 	for (p = FIRST_PROC; p <= LAST_PROC; p++)
 	{
 		/* Skip non-ready process. */
 		if (p->state != PROC_READY)
 			continue;
 
-		/*
-		 * Process with higher
-		 * waiting time found.
-		 */
-		if (p->counter > next->counter)
-		{
-			next->counter++;
+		int new_position = position - p->priority - p->nice + 80 + MIN_TICKETS;
+		
+		if (position < winning_pos && winning_pos < new_position) {
+			if (next != IDLE) next->counter++;
 			next = p;
+		} else {
+			if (p != IDLE) p->counter++;
 		}
-
-		/*
-		 * Increment waiting
-		 * time of process.
-		 */
-		else
-			p->counter++;
+		position = new_position;
 	}
 
 	/* Switch to next process. */
