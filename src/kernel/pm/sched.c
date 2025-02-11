@@ -59,7 +59,10 @@ PUBLIC void resume(struct process *proc)
 		sched(proc);
 }
 
-PUBLIC void yield_mult_queues(void)
+/**
+ * @brief Yields the processor.
+ */
+PUBLIC void yield(void) {
 {
 	struct process *p;    /* Working process.     */
 	struct process *next; /* Next process to run. */
@@ -113,13 +116,4 @@ PUBLIC void yield_mult_queues(void)
 	}
 	if (curr_proc != next)
 		switch_to(next);
-}
-
-#define yield_ yield_mult_queues
-
-/**
- * @brief Yields the processor.
- */
-PUBLIC void yield(void) {
-	yield_();
 }
