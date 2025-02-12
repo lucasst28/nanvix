@@ -154,6 +154,7 @@ found:
 	proc->alarm = 0;
 	proc->next = NULL;
 	proc->chain = NULL;
+	proc->queues = 0;
 	sched(proc);
 
 	curr_proc->nchildren++;
