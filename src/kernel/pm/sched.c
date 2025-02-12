@@ -62,7 +62,7 @@ PUBLIC void resume(struct process *proc)
 /**
  * @brief Yields the processor.
  */
-PUBLIC void yield(void) {
+PUBLIC void yield(void)
 {
 	struct process *p;    /* Working process.     */
 	struct process *next; /* Next process to run. */
