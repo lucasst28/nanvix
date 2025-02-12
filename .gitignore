@@ -46,8 +46,9 @@ doc/*-kernel
 *.iso
 nanvix-iso/*
 tools/run/bochsrc.txt
+toolchain/libexec/gcc/i486-elf/13.1.0/install-tools/fixincl
+toolchain/libexec/gcc/i486-elf/13.1.0/install-tools/mkheaders
 
 # Exceptions.
 !doc/paper/img/*.pdf
 !doc/paper/*.pdf
-toolchain/libexec/gcc/i486-elf/13.1.0/install-tools/*
