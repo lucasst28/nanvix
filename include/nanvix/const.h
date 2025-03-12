@@ -59,6 +59,7 @@
 
 	#define _NEED_NULL
 	#include <decl.h>
+	#define NR_SEMS 10 /**< Number of semaphores. */
 
 	/**@}*/
 

@@ -20,6 +20,15 @@
 #ifndef SEM_H_
 #define SEM_H_
 
+	struct semaphore{
+	int key; /**< Semaphore key. */
+	int valid; /**< Valid semaphore. */
+	int value; /**< Semaphore value. */
+	struct process *waiting; /**< Process waiting on this semaphore. */
+	};
+
+	EXTERN struct semaphore semaphores[NR_SEMS];
+
 	/**
 	 * @brief Comand values for semaphores.
 	 */

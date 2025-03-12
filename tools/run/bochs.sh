@@ -114,5 +114,5 @@ done
 
 config_bochs
 
-/home/lucas-severino/Documents/AS/nanvix/toolchain/bochs/bin/bochs -q -f /home/lucas-severino/Documents/AS/nanvix/tools/run/bochsrc.txt
+/home/a-noel/Documents/AS-lucas/nanvix/toolchain/bochs/bin/bochs -q -f /home/a-noel/Documents/AS-lucas/nanvix/tools/run/bochsrc.txt
 

@@ -27,6 +27,7 @@
 #include <nanvix/mm.h>
 #include <nanvix/syscall.h>
 #include <fcntl.h>
+#include <sem.h>
 
 /**
  * @brief Forks the current process.
@@ -120,6 +121,7 @@ PUBLIC void kmain(void)
 	dev_init();
 	mm_init();
 	pm_init();
+	sem_init();
 	fs_init();
 
 	chkout(DEVID(TTY_MAJOR, 0, CHRDEV));

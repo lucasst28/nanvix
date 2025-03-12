@@ -53,7 +53,7 @@ if [ x$1 != x ] ; then
   prefix=$1
   shift
 else
-  prefix=/home/lucas-severino/Documents/AS/nanvix/toolchain
+  prefix=/home/a-noel/Documents/AS-lucas/nanvix/toolchain
 fi
 
 # Allow for alternate isysroot in which to find headers

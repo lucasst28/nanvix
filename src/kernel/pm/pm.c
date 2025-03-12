@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <limits.h>
+#include <sem.h>
 
 /**
  * @brief Idle process page directory.
